@@ -5339,14 +5339,13 @@ def process_tasks(state):
         gen["file_list"] = file_list    
         gen["file_settings_list"] = file_settings_list    
 
-    start_time = time.time()
-
     global gen_in_progress
     gen_in_progress = True
     gen["in_progress"] = True
     gen["preview"] = None
     gen["status"] = "Generating Video"
-    yield time.time(), time.time() 
+
+    # yield time.time(), time.time() 
     prompt_no = 0
     while len(queue) > 0:
         prompt_no += 1
