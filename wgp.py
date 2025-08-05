@@ -5386,7 +5386,7 @@ def process_tasks(state):
                 gen["status"] = data
             elif cmd == "output":
                 gen["preview"] = None
-                yield time.time() , time.time() 
+                # yield time.time() , time.time() 
             elif cmd == "progress":
                 gen["progress_args"] = data
                 # progress(*data)
@@ -5394,7 +5394,7 @@ def process_tasks(state):
                 torch.cuda.current_stream().synchronize()
                 preview= None if data== None else generate_preview(data) 
                 gen["preview"] = preview
-                yield time.time() , gr.Text()
+                # yield time.time() , gr.Text()
             else:
                 raise Exception(f"unknown command {cmd}")
 
@@ -5403,7 +5403,7 @@ def process_tasks(state):
             gen["abort"] = False
             status = "Video Generation Aborted", "Video Generation Aborted"
             # yield  gr.Text(), gr.Text()
-            yield time.time() , time.time() 
+            # yield time.time() , time.time() 
             gen["status"] = status
 
         queue[:] = [item for item in queue if item['id'] != task['id']]
@@ -5427,6 +5427,8 @@ def process_tasks(state):
             print(f"Error playing notification sound: {e}")
     gen["status"] = status
     gen["status_display"] =  False
+
+    return time.time(), time.time()
 
 
 
