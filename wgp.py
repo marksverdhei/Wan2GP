@@ -5402,9 +5402,8 @@ def process_tasks(state):
         if abort:
             gen["abort"] = False
             status = "Video Generation Aborted", "Video Generation Aborted"
-            # yield  gr.Text(), gr.Text()
-            # yield time.time() , time.time() 
             gen["status"] = status
+            return gr.Text(), gr.Text()
 
         queue[:] = [item for item in queue if item['id'] != task['id']]
         update_global_queue_ref(queue)
