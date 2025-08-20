@@ -1,0 +1,35 @@
+name: Sync fork with upstream
+
+on:
+  schedule:
+    - cron: "15 3 * * *"   # runs daily at 03:15 UTC
+  workflow_dispatch: {}     # allow manual run
+
+permissions:
+  contents: write
+
+env:
+  UPSTREAM: deepbeepmeep/Wan2GP
+  UPSTREAM_BRANCH: main
+  TARGET_BRANCH: main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/${UPSTREAM}.git
+          git fetch upstream ${UPSTREAM_BRANCH}
+
+      - name: Fast-forward fork
+        run: |
+          git checkout ${TARGET_BRANCH}
+          # Try a strict fast-forward; fail if conflicts or diverged history.
+          git merge --ff-only upstream/${UPSTREAM_BRANCH}
+          git push origin ${TARGET_BRANCH}
