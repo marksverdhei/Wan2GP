@@ -4884,6 +4884,7 @@ def generate_preview(model_type, latents):
 
 def process_tasks(state):
     from shared.utils.thread_utils import AsyncStream, async_run
+    abort = False
 
     gen = get_gen_info(state)
     queue = gen.get("queue", [])
@@ -4919,8 +4920,11 @@ def process_tasks(state):
     gen["status"] = "Generating Video"
 
     # yield time.time(), time.time() 
+
+    start_time = time.time()
     prompt_no = 0
     while len(queue) > 0:
+        start_time = time.time()
         prompt_no += 1
         gen["prompt_no"] = prompt_no
         task = queue[0]
@@ -4959,15 +4963,15 @@ def process_tasks(state):
                 gen["status"] = data
             elif cmd == "output":
                 gen["preview"] = None
-                # yield time.time() , time.time() 
             elif cmd == "progress":
                 gen["progress_args"] = data
-                # progress(*data)
+                if progress is not None:
+                    progress(*data)
             elif cmd == "preview":
                 torch.cuda.current_stream().synchronize()
-                preview= None if data== None else generate_preview(params["model_type"], data) 
+                preview = None if data== None else generate_preview(params["model_type"], data) 
                 gen["preview"] = preview
-                # yield time.time() , gr.Text()
+                # return time.time(), gr.Text()
             else:
                 raise Exception(f"unknown command {cmd}")
 
@@ -4985,10 +4989,8 @@ def process_tasks(state):
     gen["prompt"] = ""
     end_time = time.time()
     if abort:
-        # status = f"Video generation was aborted. Total Generation Time: {end_time-start_time:.1f}s" 
         status = f"Video generation was aborted. Total Generation Time: {format_time(end_time-start_time)}" 
     else:
-        # status = f"Total Generation Time: {end_time-start_time:.1f}s" 
         status = f"Total Generation Time: {format_time(end_time-start_time)}"         
         # Play notification sound when video generation completed successfully
         try:
