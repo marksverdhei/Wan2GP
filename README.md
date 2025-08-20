@@ -1,4 +1,8 @@
-# WanGP
+# WanGP - marksverdhei fork
+
+This fork is equivalent to Wan2GP except that it solves a bug where the generation queue is cancelled if there is no client connected to the gradio app.
+This might have been done at the cost of progress information during generation.
+Below is readme from the upstream Wan2GP.
 
 -----
 <p align="center">
